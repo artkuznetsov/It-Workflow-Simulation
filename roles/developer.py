@@ -4,7 +4,7 @@ import numpy as np
 from model_parameters import GlobalParameters as g
 
 
-class Developer:
+class Developer(object):
     def __init__(self, experience, available_working_hour, components, board, backlog):
         self.available_working_hour = available_working_hour
         self.experience = experience
@@ -77,21 +77,7 @@ class Developer:
                 if ticket_component in self.components:
                     if ticket.assigned_to is None:
                         ticket.assigned_to = self.uuid
-                    # if ticket.type in g.ticket_types and ticket.type != 'Feature':
                         self._review_ticket(ticket)
-                    #     """REVIEW BUG, TASK, TECHNICAL DEBT"""
-                    #     g.env.process(self._review_ticket(ticket, 'READY FOR QA'))
-                    # elif ticket.type == 'Feature':
-                    #     """DO NOT REVIEW FEATURE"""
-                    #     yield g.env.timeout(0.1)
-                    # elif ticket.type == 'Sub-Task':
-                    #
-                    #     """REVIEW SUBTASK"""
-                    #     g.env.process(self._review_ticket(ticket, 'DONE'))
-                    # else:
-                    #
-                    #     """REVIEW COMPLETION BLOCKER"""
-                    #     g.env.process(self._review_ticket(ticket, 'READY FOR QA'))
 
     def _development(self, ticket):
         ticket_done = False

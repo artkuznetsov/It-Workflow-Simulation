@@ -4,7 +4,7 @@ import numpy as np
 from model_parameters import GlobalParameters as g
 
 
-class QA:
+class QA(object):
     def __init__(self, experience, available_working_hour, board, release_master=False):
         self.experience = experience  # QA experience for this project. Can be in range [0 - 10]
         self.available_working_hour = available_working_hour
@@ -192,6 +192,5 @@ class QA:
 
                         """RELEASE: UAT: TESTING PASSED"""
                         self._uat_pass(ticket)
-                        # self._testing_pass(ticket)
             yield g.env.timeout(0.5)
         return

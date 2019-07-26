@@ -3,7 +3,7 @@ import uuid
 from entities.subtask import Subtask
 
 
-class Ticket:
+class Ticket(object):
     def __init__(self, complexity, components, type, priority, status):
         self.type = type
         self.priority = priority

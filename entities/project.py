@@ -3,7 +3,7 @@ from roles.product_owner import PO
 from roles.qa import QA
 
 
-class Project:
+class Project(object):
     def __init__(self):
         self.name = 'Dataswirch Core'
         self.qas = list()

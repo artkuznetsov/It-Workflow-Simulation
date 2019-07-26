@@ -4,7 +4,7 @@ from entities.board import StoriesBoard
 from model_parameters import GlobalParameters as g
 
 
-class Model:
+class Model(object):
     def __init__(self):
         """
         Constructor class for new model.
