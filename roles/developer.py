@@ -102,9 +102,9 @@ class Developer(object):
     def _get_development_time(self, ticket):
         # TODO: CONFIGURE THIS MORE CORRECTLY
         if ticket.type in g.subtask_types:
-            return (g.develop_complexity_koefficient[ticket.parent.complexity] / self.experience) * 460 * 4
+            return (g.develop_complexity_coefficient[ticket.parent.complexity] / self.experience) * 460 * 4
         else:
-            return (g.develop_complexity_koefficient[ticket.complexity] / self.experience) * 1000 * 4
+            return (g.develop_complexity_coefficient[ticket.complexity] / self.experience) * 1000 * 4
 
     def development(self):
         while True:
@@ -129,7 +129,6 @@ class Developer(object):
                 if ticket.assigned_to is self.uuid:
                     yield g.env.timeout(1)
                     """COMPONENT VALIDATION"""
-                    var = None
                     if ticket.components.__len__() is 3:
 
                         component_available_states = ['correct', 'remove']
@@ -228,10 +227,4 @@ class Developer(object):
                             break
                     if ticket_selected:
                         break
-
-            # if not ticket_selected:
-            #     print(f" Developer for {self.components} components can't find any task for development. "
-            #           f"He/she will busy by some process issues 30 minutes")
-            #     g.stat_dev['free_time'] += 0.5
-            #     # TODO: yield g.env.timeout(0.5)
         return

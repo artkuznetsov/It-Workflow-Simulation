@@ -3,7 +3,7 @@ import uuid
 from entities.subtask import Subtask
 
 
-class Ticket(object):
+class Ticket():
     def __init__(self, complexity, components, type, priority, status):
         self.type = type
         self.priority = priority
@@ -32,8 +32,7 @@ class Ticket(object):
         self.status = direct
 
     def add_subtask(self, component, type, status, board):
-        components = []
-        components.append(component)
+        components = [component]
         subtask = Subtask(component=components,
                           type=type,
                           status=status,

@@ -9,6 +9,7 @@ class GlobalParameters:
     ticket_priority = [2, 1, 0, 3]
     ticket_types = ['Bug', 'Feature', 'Task', 'Technical Debt']
     subtask_types = ['Completion blocker', 'Sub-Task']
+    complexity_types = ['Trainee', 'Junior', 'Regular', 'Senior', 'Architect']
     dow = 1  # Day of the week
     last_release_day = 0
 
@@ -31,7 +32,7 @@ class GlobalParameters:
             'ASE': 0.2}
     )
 
-    develop_complexity_koefficient = {
+    develop_complexity_coefficient = {
         'Architect': 0.4,
         'Senior': 0.32,
         'Regular': 0.1,
@@ -39,12 +40,9 @@ class GlobalParameters:
         'Trainee': 0.01
     }
     inter_arrival_time = 1  # Average time (days) between arrivals
-    los = 10  # Average length of stay in hospital (days)
     sim_duration = 30  # Duration of simulation (days)
-    audit_interval = 1  # Interval between audits (days)
     env = simpy.Environment()
 
-    complexity_types = ['Trainee', 'Junior', 'Regular', 'Senior', 'Architect']
     stat_backlog = dict(
         created=dict(
             total=int()),
@@ -55,7 +53,9 @@ class GlobalParameters:
         free_time=int()  # hours
     )
 
-    backlog__ticket_correct_component = 0.8  # Probability that ticket in backlog already has correct list of components (%)
-    backlog__ticket_need_to_change_component = 0.12  # 60
-    backlog__ticket_need_to_add_component = 0.06  # 30
-    backlog__ticket_need_to_remove_component = 0.02  # 10
+    # Probability that ticket in backlog already has correct list of components (%)
+    backlog__ticket_correct_component = 0.8
+
+    backlog__ticket_need_to_change_component = 0.12  # 60%
+    backlog__ticket_need_to_add_component = 0.06  # 30%
+    backlog__ticket_need_to_remove_component = 0.02  # 10%

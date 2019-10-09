@@ -9,8 +9,8 @@ class Model(object):
         """
         Constructor class for new model.
         """
-        self.board = StoriesBoard()
-        self.project = Project()
+        self.board = StoriesBoard('Stories Board')
+        self.project = Project('DataSwitch Core')
         self.backlog = Backlog()
 
         return

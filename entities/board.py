@@ -4,7 +4,7 @@ import pandas as pd
 class StoriesBoard:
     board = pd.DataFrame()
 
-    def __init__(self):
+    def __init__(self, name):
         self.board = pd.DataFrame({
             'tickets': [[], [], [], [], [], [], [], [], [], [], []],
             'max': [3, 3, 12, 5, 7, 1000, 1000, 1000, 1000, 1000, 1000],
@@ -21,5 +21,21 @@ class StoriesBoard:
                   'PRE-RELEASE QA',
                   'DONE',
                   'RELEASED'])
-        self.board.index.name = 'Stories Board'
+        # self.board.index.name = 'Stories Board'
+        self.board.index.name = name
         return
+
+
+class Column:
+    def __init__(self, name, max_size=None, min_size=None):
+        self.name = name
+        self.max_size = max_size
+        self.min_size = min_size
+
+
+class Status:
+    def __init__(self, name):
+        self.name = name
+
+
+

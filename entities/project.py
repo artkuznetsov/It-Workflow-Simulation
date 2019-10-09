@@ -4,8 +4,8 @@ from roles.qa import QA
 
 
 class Project(object):
-    def __init__(self):
-        self.name = 'Dataswirch Core'
+    def __init__(self, name):
+        self.name = name
         self.qas = list()
         self.devs = list()
         self.pos = list()
