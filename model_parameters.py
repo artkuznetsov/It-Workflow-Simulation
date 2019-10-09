@@ -7,6 +7,10 @@ class GlobalParameters:
     free_time_qa = 0
     components = [['CM'], ['ASE'], ['UI'], ['CM', 'UI'], ['CM', 'ASE'], ['UI', 'ASE'], ['UI', 'ASE', 'CM']]
     ticket_priority = [2, 1, 0, 3]
+
+    # You could use Enum for ticket_types
+    # https://docs.python.org/3/library/enum.html
+    # --mrurenko 2019-10-08
     ticket_types = ['Bug', 'Feature', 'Task', 'Technical Debt']
     subtask_types = ['Completion blocker', 'Sub-Task']
     complexity_types = ['Trainee', 'Junior', 'Regular', 'Senior', 'Architect']

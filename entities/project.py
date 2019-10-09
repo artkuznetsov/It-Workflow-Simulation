@@ -11,17 +11,17 @@ class Project(object):
         self.pos = list()
 
     def qas_register(self, count, experience, available_working_hours, board, release_master=False):
-        for employee in range(count):
+        for _ in range(count):
             qa = QA(experience, available_working_hours, board, release_master=release_master)
             self.qas.append(qa)
 
     def po_register(self, count, frequency, board):
-        for employee in range(count):
+        for _ in range(count):
             po = PO(frequency=frequency, board=board)
             self.pos.append(po)
 
     def dev_register(self, count, experience, available_working_hours, components, board, backlog):
-        for employee in range(count):
+        for _ in range(count):
             dev = Developer(experience=experience,
                             available_working_hour=available_working_hours,
                             components=components,

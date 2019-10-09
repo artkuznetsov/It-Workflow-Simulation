@@ -106,15 +106,100 @@ class Developer(object):
         else:
             return (g.develop_complexity_coefficient[ticket.complexity] / self.experience) * 1000 * 4
 
+    def _component_validation(self, ticket):
+        if ticket.components.__len__() is 3:
+
+            component_available_states = ['correct', 'remove']
+            var = np.random.choice(component_available_states, 1,
+                                   p=[g.backlog__ticket_correct_component,
+                                      1 - g.backlog__ticket_correct_component])[0].__str__()
+        elif ticket.components.__len__() is 1:
+            component_available_states = ['correct', 'change', 'add']
+            var = np.random.choice(component_available_states, 1,
+                                   p=[g.backlog__ticket_correct_component,
+                                      g.backlog__ticket_need_to_change_component,
+                                      1 - (g.backlog__ticket_correct_component +
+                                           g.backlog__ticket_need_to_change_component)])[0].__str__()
+        else:
+            component_available_states = ['correct', 'change', 'add', 'remove']
+            var = np.random.choice(component_available_states, 1,
+                                   p=[g.backlog__ticket_correct_component,
+                                      g.backlog__ticket_need_to_change_component,
+                                      g.backlog__ticket_need_to_add_component,
+                                      g.backlog__ticket_need_to_remove_component])[0].__str__()
+
+        # Developer adds some component to the ticket
+        if var == 'add':
+            global_components = g.components[:3]
+            for component in global_components:
+                component = component[0]
+                if component not in ticket.components:
+                    ticket.components.append(component)
+                    break
+
+        # Developer removes some component to the ticket
+        elif var == 'remove':
+            redudant = np.random.choice(ticket.components, 1)[0].copy().__str__()
+            for component_index in range(ticket.components.__len__()):
+                if ticket.components[component_index] == redudant:
+                    del ticket.components[component_index]
+                    break
+
+        # Developer changes some component to the ticket
+        elif var == 'change':
+            change_candidat = np.random.choice(ticket.components, 1)[0].copy().__str__()
+            for component in g.components[:3]:
+                if change_candidat != component[0] and component[0] not in ticket.components:
+                    ticket.components.append(component[0])
+                    break
+
+            for component_index in range(ticket.components.__len__()):
+                if ticket.components[component_index] == change_candidat:
+                    del ticket.components[component_index]
+                    break
+
+    def backlog_pull_out(self, ticket_selected):
+        if not ticket_selected:
+            for ticket_index in range(self.backlog.tickets.__len__()):
+                ticket = self.backlog.tickets[ticket_index]
+                for component in self.components:
+                    if component in ticket.components:
+                        # TODO: yield g.env.timeout(random.uniform(0,0.5)) # Time, spend to search a ticket int backlog
+
+                        # Grap this ticket to the board
+                        self.board.board.at['SELECTED FOR DEVELOPMENT', 'tickets'].append(ticket)
+
+                        self.board.board.at['SELECTED FOR DEVELOPMENT', 'count'] += 1
+
+                        ticket.status = 'SELECTED FOR DEVELOPMENT'
+                        ticket.assigned_to = self.uuid
+                        ticket_selected = 1
+
+                        # Removing ticket from backlog
+                        self.backlog.tickets.pop(ticket_index)
+
+                        # Level up backlog statistic
+                        g.stat_backlog['resolved']['total'] += 1
+
+                        print(self.board.board)
+
+                        if ticket_selected:
+                            break
+                    if ticket_selected:
+                        break
+                if ticket_selected:
+                    break
+
     def development(self):
         while True:
+
             """START TO WORK"""
             yield g.env.timeout(0.25)
+
             """START TO WORK: SEARCH TICKET"""
             ticket_selected = self.search_ticket()
 
-            """Review subtask and move on to READY for QA. Unassigne ticket"""
-            # yield g.env.timeout(20)
+            """Review subtask and move on to READY for QA. Unassigned ticket"""
             self.review()
 
             """DEVELOPMENT PROCESS"""
@@ -124,107 +209,23 @@ class Developer(object):
                     self._development(ticket)
                     break
 
-            # Analysis
+            """Analysis"""
             for ticket in self.board.board.tickets['IN ANALYSIS']:
                 if ticket.assigned_to is self.uuid:
                     yield g.env.timeout(1)
-                    """COMPONENT VALIDATION"""
-                    if ticket.components.__len__() is 3:
 
-                        component_available_states = ['correct', 'remove']
-                        var = np.random.choice(component_available_states, 1,
-                                               p=[g.backlog__ticket_correct_component,
-                                                  1 - g.backlog__ticket_correct_component])[0].__str__()
-                    elif ticket.components.__len__() is 1:
-                        component_available_states = ['correct', 'change', 'add']
-                        var = np.random.choice(component_available_states, 1,
-                                               p=[g.backlog__ticket_correct_component,
-                                                  g.backlog__ticket_need_to_change_component,
-                                                  1 - (
-                                                          g.backlog__ticket_correct_component + g.backlog__ticket_need_to_change_component)])[
-                            0].__str__()
-                    else:
-                        component_available_states = ['correct', 'change', 'add', 'remove']
-                        var = np.random.choice(component_available_states, 1,
-                                               p=[g.backlog__ticket_correct_component,
-                                                  g.backlog__ticket_need_to_change_component,
-                                                  g.backlog__ticket_need_to_add_component,
-                                                  g.backlog__ticket_need_to_remove_component])[0].__str__()
+                    # Component validation
+                    self._component_validation(ticket)
 
-                    # Developer adds some component to the ticket
-                    if var == 'add':
-                        global_components = g.components[:3]
-                        for component in global_components:
-                            component = component[0]
-                            if component not in ticket.components:
-                                ticket.components.append(component)
-                                break
-
-                    # Developer removes some component to the ticket
-                    elif var == 'remove':
-                        redudant = np.random.choice(ticket.components, 1)[0].copy().__str__()
-                        for component_index in range(ticket.components.__len__()):
-                            if ticket.components[component_index] == redudant:
-                                del ticket.components[component_index]
-                                break
-
-                    # Developer changes some component to the ticket
-                    elif var == 'change':
-                        change_candidat = np.random.choice(ticket.components, 1)[0].copy().__str__()
-                        for component in g.components[:3]:
-                            if change_candidat != component[0] and component[0] not in ticket.components:
-                                ticket.components.append(component[0])
-                                break
-
-                        for component_index in range(ticket.components.__len__()):
-                            if ticket.components[component_index] == change_candidat:
-                                del ticket.components[component_index]
-                                break
-
-                    """CREATION NEW SUBTASKS"""
+                    # Creation a new subtask
                     for component in ticket.components:
                         ticket.add_subtask(component=component,
                                            type='Sub-Task',
                                            board=self.board,
                                            status='SELECTED FOR DEVELOPMENT')
 
-                    ## Move on "Development"
+                    # Move on "Development"
                     ticket.move_on('IN DEV', self.board.board)
-                    print(self.board.board)
 
             # Backlog pull out. Select a scope for development
-            if not ticket_selected:
-                # yield g.env.timeout(1)
-                for ticket_index in range(self.backlog.tickets.__len__()):
-                    ticket = self.backlog.tickets[ticket_index]
-                    for component in self.components:
-                        if component in ticket.components:
-                            # TODO: yield g.env.timeout(random.uniform(0,0.5)) # Time, spend to search a ticket int backlog
-
-                            # Grap this ticket to StoriesBoard
-                            self.board.board.at['SELECTED FOR DEVELOPMENT', 'tickets'] \
-                                .append(ticket)
-
-                            self.board.board.at['SELECTED FOR DEVELOPMENT', 'count'] += 1
-
-                            ticket.status = 'SELECTED FOR DEVELOPMENT'
-                            ticket.assigned_to = self.uuid
-
-                            # self.wip = ticket
-                            ticket_selected = 1
-
-                            # Removing ticket from backlog
-                            self.backlog.tickets.pop(ticket_index)
-
-                            # Level up backlog statistic
-                            g.stat_backlog['resolved']['total'] += 1
-
-                            print(self.board.board)
-
-                            if ticket_selected:
-                                break
-                        if ticket_selected:
-                            break
-                    if ticket_selected:
-                        break
-        return
+            self.backlog_pull_out(ticket_selected)

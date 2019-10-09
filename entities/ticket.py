@@ -30,6 +30,7 @@ class Ticket():
         board.tickets[direct].append(self)
         board.at[direct, 'count'] += 1
         self.status = direct
+        print(board)
 
     def add_subtask(self, component, type, status, board):
         components = [component]
