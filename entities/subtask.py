@@ -1,7 +1,7 @@
 import uuid
 
 
-class Subtask(object):
+class Subtask:
     def __init__(self, component, type, status, board, parent):
         self.type = type
         self.components = component

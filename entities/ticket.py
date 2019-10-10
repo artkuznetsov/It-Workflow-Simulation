@@ -3,7 +3,7 @@ import uuid
 from entities.subtask import Subtask
 
 
-class Ticket():
+class Ticket:
     def __init__(self, complexity, components, type, priority, status):
         self.type = type
         self.priority = priority
@@ -34,17 +34,18 @@ class Ticket():
 
     def add_subtask(self, component, type, status, board):
         components = [component]
-        subtask = Subtask(component=components,
-                          type=type,
-                          status=status,
-                          board=board,
-                          parent=self)
+        subtask = Subtask(
+            component=components, type=type, status=status, board=board, parent=self
+        )
         board.board.tickets['SELECTED FOR DEVELOPMENT'].append(subtask)
         self.subtasks.append(subtask)
 
     def is_ready_to_review(self):
         for subtask in self.subtasks:
-            if subtask.status in ('SELECTED FOR DEVELOPMENT', 'IN DEV') and self.status != 'BUGFIXING':
+            if (
+                subtask.status in ('SELECTED FOR DEVELOPMENT', 'IN DEV')
+                and self.status != 'BUGFIXING'
+            ):
                 return False
         return True
 
@@ -56,6 +57,12 @@ class Ticket():
 
     def is_ready_to_deploy(self):
         for subtask in self.subtasks:
-            if subtask.status in ('SELECTED FOR DEVELOPMENT', 'IN DEV', 'REVIEW','READY FOR QA','IN QA'):
+            if subtask.status in (
+                'SELECTED FOR DEVELOPMENT',
+                'IN DEV',
+                'REVIEW',
+                'READY FOR QA',
+                'IN QA',
+            ):
                 return False
             return True

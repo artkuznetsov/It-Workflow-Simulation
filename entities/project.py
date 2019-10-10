@@ -3,28 +3,35 @@ from roles.product_owner import PO
 from roles.qa import QA
 
 
-class Project(object):
+class Project:
     def __init__(self, name):
         self.name = name
         self.qas = list()
         self.devs = list()
         self.pos = list()
 
-    def qas_register(self, count, experience, available_working_hours, board, release_master=False):
-        for _ in range(count):
-            qa = QA(experience, available_working_hours, board, release_master=release_master)
+    def qas_register(self, **kwargs):
+        for _ in range(kwargs['count']):
+            qa = QA(
+                kwargs['experience'],
+                kwargs['available_working_hours'],
+                kwargs['board'],
+                release_master=kwargs.get('release_master'),
+            )
             self.qas.append(qa)
 
-    def po_register(self, count, frequency, board):
-        for _ in range(count):
-            po = PO(frequency=frequency, board=board)
+    def po_register(self, **kwargs):
+        for _ in range(kwargs['count']):
+            po = PO(kwargs['frequency'], kwargs['board'])
             self.pos.append(po)
 
-    def dev_register(self, count, experience, available_working_hours, components, board, backlog):
-        for _ in range(count):
-            dev = Developer(experience=experience,
-                            available_working_hour=available_working_hours,
-                            components=components,
-                            board=board,
-                            backlog=backlog)
+    def dev_register(self, **kwargs):
+        for _ in range(kwargs['count']):
+            dev = Developer(
+                experience=kwargs['experience'],
+                available_working_hour=kwargs['available_working_hours'],
+                components=kwargs['components'],
+                board=kwargs['board'],
+                backlog=kwargs['backlog'],
+            )
             self.devs.append(dev)

@@ -1,6 +1,6 @@
 from entities.project import Project
 from entities.backlog import Backlog
-from entities.board import Board
+from entities.taskboard import TaskBoard
 from model_parameters import GlobalParameters as g
 
 """
@@ -13,7 +13,7 @@ class Model(object):
         """
         Constructor class for new model.
         """
-        self.board = Board('Stories Board')
+        self.board = TaskBoard('Stories Board')
         self.project = Project('DataSwitch Core')
         self.backlog = Backlog()
 
@@ -31,17 +31,26 @@ class Model(object):
 
         Adding 2 QAs with best experience on the project
         """
-        self.project.qas_register(count=2, experience=10, available_working_hours=10, board=self.board)
+        self.project.qas_register(
+            count=2, experience=10, available_working_hours=10, board=self.board
+        )
 
         """
         Adding 1 release master (for our project we have release master as QA)
         """
-        self.project.qas_register(count=1, experience=7, available_working_hours=10, board=self.board,
-                                  release_master=True)
+        self.project.qas_register(
+            count=1,
+            experience=7,
+            available_working_hours=10,
+            board=self.board,
+            release_master=True,
+        )
         """
         Adding 1 middle QA on the project
         """
-        self.project.qas_register(count=1, experience=4, available_working_hours=8, board=self.board)
+        self.project.qas_register(
+            count=1, experience=4, available_working_hours=8, board=self.board
+        )
 
         """
         Adding 1 new QA to the project
@@ -51,47 +60,85 @@ class Model(object):
         """
         Adding 1 crazy developer
         """
-        self.project.dev_register(count=1, experience=10, available_working_hours=15, components=['CM'],
-                                  board=self.board,
-                                  backlog=self.backlog)
+        self.project.dev_register(
+            count=1,
+            experience=10,
+            available_working_hours=15,
+            components=['CM'],
+            board=self.board,
+            backlog=self.backlog,
+        )
         """
         Adding 2 UI developers with middle experience
         """
-        self.project.dev_register(count=2, experience=7, available_working_hours=8, components=['UI'], board=self.board,
-                                  backlog=self.backlog)
+        self.project.dev_register(
+            count=2,
+            experience=7,
+            available_working_hours=8,
+            components=['UI'],
+            board=self.board,
+            backlog=self.backlog,
+        )
 
         """
         Adding 1 UI developer with best experience
         """
-        self.project.dev_register(count=1, experience=10, available_working_hours=10, components=['UI'],
-                                  board=self.board,
-                                  backlog=self.backlog)
+        self.project.dev_register(
+            count=1,
+            experience=10,
+            available_working_hours=10,
+            components=['UI'],
+            board=self.board,
+            backlog=self.backlog,
+        )
 
         """
         Adding 2 cross-component developers with best experience
         """
-        self.project.dev_register(count=2, experience=10, available_working_hours=8, components=['CM', 'ASE'],
-                                  board=self.board, backlog=self.backlog)
+        self.project.dev_register(
+            count=2,
+            experience=10,
+            available_working_hours=8,
+            components=['CM', 'ASE'],
+            board=self.board,
+            backlog=self.backlog,
+        )
 
         """
         Adding 2 single-component developers
         """
-        self.project.dev_register(count=2, experience=7, available_working_hours=8, components=['CM'], board=self.board,
-                                  backlog=self.backlog)
+        self.project.dev_register(
+            count=2,
+            experience=7,
+            available_working_hours=8,
+            components=['CM'],
+            board=self.board,
+            backlog=self.backlog,
+        )
 
         """
         Adding 2 single component developers with best experience
         """
-        self.project.dev_register(count=2, experience=10, available_working_hours=8, components=['ASE'],
-                                  board=self.board,
-                                  backlog=self.backlog)
+        self.project.dev_register(
+            count=2,
+            experience=10,
+            available_working_hours=8,
+            components=['ASE'],
+            board=self.board,
+            backlog=self.backlog,
+        )
 
         """
         Adding 1 single component developer
         """
-        self.project.dev_register(count=1, experience=7, available_working_hours=8, components=['ASE'],
-                                  board=self.board,
-                                  backlog=self.backlog)
+        self.project.dev_register(
+            count=1,
+            experience=7,
+            available_working_hours=8,
+            components=['ASE'],
+            board=self.board,
+            backlog=self.backlog,
+        )
 
         """
         Register processES that will be run into our simulation model
@@ -117,8 +164,10 @@ class Model(object):
         """
         print(self.board.board)
         print(f"Spent {g.env.now} hours")
-        print(f'Backlog. Size is \t\t{self.backlog.tickets.__len__()} tickets\n'
-              f"Backlog. Created \t\t{g.stat_backlog['created']['total']} tickets\n")
+        print(
+            f'Backlog. Size is \t\t{self.backlog.tickets.__len__()} tickets\n'
+            f"Backlog. Created \t\t{g.stat_backlog['created']['total']} tickets\n"
+        )
 
         return
 

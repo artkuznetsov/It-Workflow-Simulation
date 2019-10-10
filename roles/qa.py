@@ -6,7 +6,9 @@ from model_parameters import GlobalParameters as g
 
 class QA(object):
     def __init__(self, experience, available_working_hour, board, release_master=False):
-        self.experience = experience  # QA experience for this project. Can be in range [0 - 10]
+        # QA experience for this project. Can be in range [0 - 10]
+        self.experience = experience
+
         self.available_working_hour = available_working_hour
         self.board = board
         self.uuid = uuid.uuid4()
@@ -27,35 +29,45 @@ class QA(object):
 
     def get_testing_time(self, ticket):
         if ticket.type in g.subtask_types:
-            return ((g.probability_to_find_bug['types'][ticket.type])
-                            / self.experience) * 10
+            return (
+                (g.probability_to_find_bug['types'][ticket.type]) / self.experience
+            ) * 10
         else:
-            return ((g.probability_to_find_bug['types'][ticket.type] *
-                             g.probability_to_find_bug['complexity'][ticket.complexity]) / (
-                                    10 / self.experience)) * 10
+            return (
+                (
+                    g.probability_to_find_bug['types'][ticket.type]
+                    * g.probability_to_find_bug['complexity'][ticket.complexity]
+                )
+                / (10 / self.experience)
+            ) * 10
         # yield g.env.timeout(testing_time)  # Testing time
 
     def _bug(self, ticket):
         cb_component = None
         probability_to_bug_found = 0.0
         if ticket.type in g.subtask_types:
-            probability_to_bug_found = g.probability_to_find_bug['types'][ticket.type] \
-                                       * g.probability_to_find_bug['component'][ticket.components[0]] \
-                                       * (self.experience / 10)
+            probability_to_bug_found = (
+                g.probability_to_find_bug['types'][ticket.type]
+                * g.probability_to_find_bug['component'][ticket.components[0]]
+                * (self.experience / 10)
+            )
         else:
             cb_component = np.random.choice(ticket.components, 1)[0].copy()
-            probability_to_bug_found = g.probability_to_find_bug['types'][ticket.type] \
-                                       * g.probability_to_find_bug['component'][
-                                           cb_component] \
-                                       * g.probability_to_find_bug['complexity'][ticket.complexity] \
-                                       * (self.experience / 10)
-            probability_to_bug_found = probability_to_bug_found if probability_to_bug_found <= 1 else 1
+            probability_to_bug_found = (
+                g.probability_to_find_bug['types'][ticket.type]
+                * g.probability_to_find_bug['component'][cb_component]
+                * g.probability_to_find_bug['complexity'][ticket.complexity]
+                * (self.experience / 10)
+            )
+            probability_to_bug_found = (
+                probability_to_bug_found if probability_to_bug_found <= 1 else 1
+            )
 
-        bug_is_found = np.random.choice([True, False], 1, p=[probability_to_bug_found, 1 - probability_to_bug_found])[
-            0].copy()
+        bug_is_found = np.random.choice(
+            [True, False], 1, p=[probability_to_bug_found, 1 - probability_to_bug_found]
+        )[0].copy()
 
-        return {'is_found': bug_is_found,
-                'component': cb_component}
+        return {'is_found': bug_is_found, 'component': cb_component}
 
     def _register_bug(self, ticket, cb_component=None):
         if ticket.type in g.subtask_types:
@@ -66,10 +78,12 @@ class QA(object):
             print(f"QA has tested CB and moved back")
         else:
             # yield g.env.timeout(0.5)
-            ticket.add_subtask(component=cb_component,
-                               type='Completion blocker',
-                               status='SELECTED FOR DEVELOPMENT',
-                               board=self.board)
+            ticket.add_subtask(
+                component=cb_component,
+                type='Completion blocker',
+                status='SELECTED FOR DEVELOPMENT',
+                board=self.board,
+            )
             ticket.move_on('BUGFIXING', self.board.board)
             print(f"QA has tested {ticket.type} and moved to Bufgixing with CB")
 
@@ -113,7 +127,10 @@ class QA(object):
                 for ticket in self.board.board.tickets['READY FOR QA']:
                     if ticket.type in g.ticket_types:
                         for subtask in ticket.subtasks:
-                            if subtask.type == 'Completion blocker' and subtask.status == 'READY FOR QA':
+                            if (
+                                subtask.type == 'Completion blocker'
+                                and subtask.status == 'READY FOR QA'
+                            ):
                                 ticket = subtask
                                 break
 

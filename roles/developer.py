@@ -102,31 +102,60 @@ class Developer(object):
     def _get_development_time(self, ticket):
         # TODO: CONFIGURE THIS MORE CORRECTLY
         if ticket.type in g.subtask_types:
-            return (g.develop_complexity_coefficient[ticket.parent.complexity] / self.experience) * 460 * 4
+            return (
+                (
+                    g.develop_complexity_coefficient[ticket.parent.complexity]
+                    / self.experience
+                )
+                * 460
+                * 4
+            )
         else:
-            return (g.develop_complexity_coefficient[ticket.complexity] / self.experience) * 1000 * 4
+            return (
+                (g.develop_complexity_coefficient[ticket.complexity] / self.experience)
+                * 1000
+                * 4
+            )
 
     def _component_validation(self, ticket):
         if ticket.components.__len__() is 3:
 
             component_available_states = ['correct', 'remove']
-            var = np.random.choice(component_available_states, 1,
-                                   p=[g.backlog__ticket_correct_component,
-                                      1 - g.backlog__ticket_correct_component])[0].__str__()
+            var = np.random.choice(
+                component_available_states,
+                1,
+                p=[
+                    g.backlog__ticket_correct_component,
+                    1 - g.backlog__ticket_correct_component,
+                ],
+            )[0].__str__()
         elif ticket.components.__len__() is 1:
             component_available_states = ['correct', 'change', 'add']
-            var = np.random.choice(component_available_states, 1,
-                                   p=[g.backlog__ticket_correct_component,
-                                      g.backlog__ticket_need_to_change_component,
-                                      1 - (g.backlog__ticket_correct_component +
-                                           g.backlog__ticket_need_to_change_component)])[0].__str__()
+            var = np.random.choice(
+                component_available_states,
+                1,
+                p=[
+                    g.backlog__ticket_correct_component,
+                    g.backlog__ticket_need_to_change_component,
+                    1
+                    - (
+                        g.backlog__ticket_correct_component
+                        + g.backlog__ticket_need_to_change_component
+                    ),
+                ],
+            )[0].__str__()
         else:
             component_available_states = ['correct', 'change', 'add', 'remove']
-            var = np.random.choice(component_available_states, 1,
-                                   p=[g.backlog__ticket_correct_component,
-                                      g.backlog__ticket_need_to_change_component,
-                                      g.backlog__ticket_need_to_add_component,
-                                      g.backlog__ticket_need_to_remove_component])[0].__str__()
+            var = np.random.choice(
+                component_available_states,
+                1,
+                p=[
+                    g.backlog__ticket_correct_component,
+                    g.backlog__ticket_need_to_change_component,
+                    g.backlog__ticket_need_to_add_component,
+                    g.backlog__ticket_need_to_remove_component,
+                ],
+            )[0].__str__()
 
         # Developer adds some component to the ticket
         if var == 'add':
@@ -149,7 +178,10 @@ class Developer(object):
         elif var == 'change':
             change_candidat = np.random.choice(ticket.components, 1)[0].copy().__str__()
             for component in g.components[:3]:
-                if change_candidat != component[0] and component[0] not in ticket.components:
+                if (
+                    change_candidat != component[0]
+                    and component[0] not in ticket.components
+                ):
                     ticket.components.append(component[0])
                     break
 
@@ -167,7 +199,9 @@ class Developer(object):
                         # TODO: yield g.env.timeout(random.uniform(0,0.5)) # Time, spend to search a ticket int backlog
 
                         # Grap this ticket to the board
-                        self.board.board.at['SELECTED FOR DEVELOPMENT', 'tickets'].append(ticket)
+                        self.board.board.at[
+                            'SELECTED FOR DEVELOPMENT', 'tickets'
+                        ].append(ticket)
 
                         self.board.board.at['SELECTED FOR DEVELOPMENT', 'count'] += 1
 
@@ -219,10 +253,12 @@ class Developer(object):
 
                     # Creation a new subtask
                     for component in ticket.components:
-                        ticket.add_subtask(component=component,
-                                           type='Sub-Task',
-                                           board=self.board,
-                                           status='SELECTED FOR DEVELOPMENT')
+                        ticket.add_subtask(
+                            component=component,
+                            type='Sub-Task',
+                            board=self.board,
+                            status='SELECTED FOR DEVELOPMENT',
+                        )
 
                     # Move on "Development"
                     ticket.move_on('IN DEV', self.board.board)
